@@ -51,4 +51,33 @@ public class BootcampService
     {
         return _repository.Count(id);
     }
+
+    public void UpdatePlan(BootcampUpdatePlanDTO dto)
+    {
+        var bc = _repository.GetById(dto.Id);
+        bc.Progress = dto.Progress;
+
+        _repository.Update(bc);
+    }
+
+    public List<BootcampResponseSubPageDTO> GetSubPage(int pageNumber, int pageSize, int progress)
+    {
+        return _repository.GetSubPage(pageNumber, pageSize, progress)
+        .Select(bc => new BootcampResponseSubPageDTO()
+        {
+            Id = bc.Id,
+            Description = bc.Description,
+            StartDate = bc.StartDate,
+            EndDate = bc.EndDate,
+            TrainerName = bc.Courses.Select(c => c.TrainerSkillDetail.Trainer.FirstName + c.TrainerSkillDetail.Trainer.LastName).FirstOrDefault(),
+            SkillName = bc.Courses.Select(c => c.TrainerSkillDetail.Skill.Name).FirstOrDefault(),
+            TotalCandidate = _repository.CountCandidate(bc.Id)
+        }).ToList();
+
+    }
+
+    public int CountCandidate(int progress)
+    {
+        return _repository.CountCandidate(progress);
+    }
 }

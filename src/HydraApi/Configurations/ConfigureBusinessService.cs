@@ -10,9 +10,14 @@ public static class ConfigureBusinessService
     {
         services.AddScoped<ICandidateRepository, CandidateRepository>();
         services.AddScoped<IBootcampRepository, BootcampRepository>();
+        services.AddScoped<ITrainerRepository, TrainerRepository>();
+        services.AddScoped<ISkillRepository, SkillRepository>();
+        services.AddScoped<ICourseRepository, CourseRepository>();
+        
         
         services.AddScoped<CandidateService>();
         services.AddScoped<BootcampService>();
+        services.AddScoped<CourseService>();
         return services;
     }
 }

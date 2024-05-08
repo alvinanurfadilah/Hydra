@@ -10,4 +10,7 @@ public interface IBootcampRepository
     void Insert(BootcampClass bootcampClass);
     void Update(BootcampClass bootcampClass);
     int Count(int id);
+
+    List<BootcampClass> GetSubPage(int pageNumber, int pageSize, int progress);
+    int CountCandidate(int progress);
 }

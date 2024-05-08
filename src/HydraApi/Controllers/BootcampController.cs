@@ -99,4 +99,66 @@ public class BootcampController : ControllerBase
             });
         }
     }
+
+    [HttpPut("plan/{id}")]
+    public IActionResult UpdatePlan(BootcampUpdatePlanDTO dto)
+    {
+        try
+        {
+            _service.UpdatePlan(dto);
+
+            return Ok(new ResponseDTO<string>()
+            {
+                Message = ConstantConfigs.MESSAGE_PUT("bootcamp plan"),
+                Status = ConstantConfigs.STATUS_OK
+            });
+        }
+        catch (System.Exception)
+        {
+            return BadRequest(new ResponseDTO<string>()
+            {
+                Message = ConstantConfigs.MESSAGE_FAILED,
+                Status = ConstantConfigs.STATUS_FAILED
+            });
+        }
+    }
+
+    [HttpGet("subpage/{progress}")]
+    public IActionResult GetSubPage(int pageNumber, int pageSize, int progress)
+    {
+        try
+        {
+            var bootcamp = _service.GetSubPage(pageNumber, pageSize, progress);
+            if (bootcamp.Count == 0)
+            {
+                return NotFound(new ResponseDTO<string[]>()
+                {
+                    Message = ConstantConfigs.MESSAGE_NOT_FOUND("bootcamp"),
+                    Status = ConstantConfigs.STATUS_NOT_FOUND,
+                    Data = Array.Empty<string>()
+                });
+            }
+
+            return Ok(new ResponseWithPaginationDTO<List<BootcampResponseSubPageDTO>>()
+            {
+                Message = ConstantConfigs.MESSAGE_GET("bootcamp"),
+                Status = ConstantConfigs.STATUS_OK,
+                Data = bootcamp,
+                Pagination = new PaginationDTO()
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalData = _service.CountCandidate(progress)
+                }
+            });
+        }
+        catch (System.Exception)
+        {
+            return BadRequest(new ResponseDTO<string>()
+            {
+                Message = ConstantConfigs.MESSAGE_FAILED,
+                Status = ConstantConfigs.STATUS_FAILED
+            });
+        }
+    }
 }

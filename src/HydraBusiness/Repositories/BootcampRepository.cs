@@ -1,5 +1,6 @@
 ﻿using HydraBusiness.Interfaces;
 using HydraDataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HydraBusiness.Repositories;
 
@@ -61,6 +62,36 @@ public class BootcampRepository : IBootcampRepository
     {
         return _context.BootcampClasses
         .Where(bc => bc.Id == id)
+        .Count();
+    }
+
+    public List<BootcampClass> GetSubPage(int pageNumber, int pageSize, int progress)
+    {
+        return _context.BootcampClasses
+        .Include(bc => bc.Candidates)
+        .Include(bc => bc.Courses)
+            .ThenInclude(tsd => tsd.TrainerSkillDetail)
+            .ThenInclude(t => t.Trainer)
+        .Include(bc => bc.Courses)
+            .ThenInclude(tsd => tsd.TrainerSkillDetail)
+            .ThenInclude(s => s.Skill)
+        .Where(bc => bc.Progress == progress)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
+    }
+
+    public int CountCandidate(int progress)
+    {
+        return _context.BootcampClasses
+        .Include(bc => bc.Candidates)
+        .Include(bc => bc.Courses)
+            .ThenInclude(tsd => tsd.TrainerSkillDetail)
+            .ThenInclude(t => t.Trainer)
+        .Include(bc => bc.Courses)
+            .ThenInclude(tsd => tsd.TrainerSkillDetail)
+            .ThenInclude(s => s.Skill)
+        .Where(bc => bc.Progress == progress)
         .Count();
     }
 }
